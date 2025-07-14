@@ -6,8 +6,8 @@ from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 
 # Load model and vectorizer
-model = joblib.load("spam_model.pkl")
-vectorizer = joblib.load("vectorizer.pkl")
+model = joblib.load("Model/spam_model.pkl")
+vectorizer = joblib.load("Model/vectorizer.pkl")
 
 stemmer = PorterStemmer()
 
