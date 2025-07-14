@@ -5,25 +5,21 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 
-# 🚨 Ensure stopwords are downloaded at runtime
-@st.cache_resource
-def get_stopwords():
-    try:
-        return set(stopwords.words('english'))
-    except LookupError:
-        nltk.download('stopwords')
-        return set(stopwords.words('english'))
-
-stop_words = get_stopwords()
-
-# Load trained model and vectorizer
+# Load model and vectorizer
 model = joblib.load("spam_model.pkl")
 vectorizer = joblib.load("vectorizer.pkl")
 
-# Preprocessing function
 stemmer = PorterStemmer()
 
+# Preprocessing function
 def preprocess(text):
+    # 🔽 Download stopwords only when needed
+    try:
+        stop_words = set(stopwords.words('english'))
+    except LookupError:
+        nltk.download('stopwords')
+        stop_words = set(stopwords.words('english'))
+
     text = text.lower()
     text = re.sub(r'https?://\S+|www\.\S+', '', text)
     text = re.sub(r'<.*?>', '', text)
@@ -33,14 +29,12 @@ def preprocess(text):
     tokens = [stemmer.stem(word) for word in tokens if word not in stop_words]
     return ' '.join(tokens)
 
-# Streamlit UI
+# UI
 st.title("📧 Email Spam Detector")
-st.write("Enter a message and I'll tell you if it's spam or ham.")
+st.write("Enter an email message and find out if it's spam or not.")
 
-# Text input
-user_input = st.text_area("Your message:", height=150)
+user_input = st.text_area("Your message here:", height=150)
 
-# Button to trigger prediction
 if st.button("Predict"):
     if user_input.strip() == "":
         st.warning("Please enter a message.")
