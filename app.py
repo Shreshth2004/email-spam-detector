@@ -1,8 +1,18 @@
 import streamlit as st
 import joblib
 import re
-from nltk.corpus import stopwords
+
 from nltk.stem import PorterStemmer
+
+import nltk
+from nltk.corpus import stopwords
+
+# Ensure stopwords are downloaded
+try:
+    stop_words = set(stopwords.words('english'))
+except LookupError:
+    nltk.download('stopwords')
+    stop_words = set(stopwords.words('english'))
 
 # Load trained model and vectorizer
 model = joblib.load("spam_model.pkl")
