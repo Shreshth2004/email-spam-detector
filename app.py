@@ -1,18 +1,20 @@
 import streamlit as st
 import joblib
 import re
-
-from nltk.stem import PorterStemmer
-
 import nltk
 from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
 
-# Ensure stopwords are downloaded
-try:
-    stop_words = set(stopwords.words('english'))
-except LookupError:
-    nltk.download('stopwords')
-    stop_words = set(stopwords.words('english'))
+# 🚨 Ensure stopwords are downloaded at runtime
+@st.cache_resource
+def get_stopwords():
+    try:
+        return set(stopwords.words('english'))
+    except LookupError:
+        nltk.download('stopwords')
+        return set(stopwords.words('english'))
+
+stop_words = get_stopwords()
 
 # Load trained model and vectorizer
 model = joblib.load("spam_model.pkl")
@@ -20,7 +22,6 @@ vectorizer = joblib.load("vectorizer.pkl")
 
 # Preprocessing function
 stemmer = PorterStemmer()
-stop_words = set(stopwords.words('english'))
 
 def preprocess(text):
     text = text.lower()
